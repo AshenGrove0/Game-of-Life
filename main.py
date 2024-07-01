@@ -2,6 +2,8 @@
 import numpy as np
 import pprint
 import time
+import copy
+
 # work through this in vscode with a proper debugger
 '''
 Any live cell with fewer than two live neighbours dies, as if by underpopulation.
@@ -14,8 +16,8 @@ Any dead cell with exactly three live neighbours becomes a live cell, as if by r
 '''
 # add an option for random noise start
 board_diamensions = {
-    'x': 5,
-    'y': 7
+    'x': 8,
+    'y': 10
 }
 alive_coords_to_start = [(3,2),(3,3),(3,4)]
 def main():
@@ -26,13 +28,11 @@ def main():
 
 def generate_starting_board():
     board = [[0 for i in range(board_diamensions['x'])] for i in range(board_diamensions['y'])]
-    #print(board)
     for row in range(board_diamensions['y']):
         for column in range(board_diamensions['x']):
             if (row, column) in alive_coords_to_start:
                 board[row][column] = 1
             else:
-                #print(row,column)
                 board[row][column] = 0
     return board
 
@@ -48,17 +48,14 @@ def run(board: list):
     ''' FIX ALGORITHM AS CHECKING FOR DEAD CELL DEOSNT WORK PERFECTLY AND TIMESLEEP DOESNT WORK AFTER FIRST RECURSION'''
     time.sleep(2)
 
-    #print(board)
     board = list(board)
     all_cell_neighbour_counts = {
         (range(board_diamensions['x']),range(board_diamensions['y'])): 'neighbour_count'
     }
-    #print(all_cell_neighbour_counts)
     all_cell_neighbour_counts = {}
     for row in range(board_diamensions['y']):
         for column in range(board_diamensions['x']):
             all_cell_neighbour_counts.update({(row,column):None})
-    #print(all_cell_neighbour_counts)
     adjacent_coords = [ # check if diagonals count
         (+1, 0),
         (-1, 0),
@@ -69,26 +66,39 @@ def run(board: list):
         (+1,- 1),
         (-1,- 1)
     ]
-    for cell,count in all_cell_neighbour_counts:
-        neighbour_count = 0
-        for relative_coord in adjacent_coords:
-            adjacent_coord = tuple(np.add(cell, relative_coord))
-            #print(type(board))
-            try:  # Try: Except: required here as may go past end of array
-                if board[adjacent_coord[0]][adjacent_coord[1]] == 1:
-                    neighbour_count+=1
-            except:
-                pass
-        all_cell_neighbour_counts.update({(cell,count):neighbour_count})
-    print(all_cell_neighbour_counts)
-    #print(all_cell_neighbour_counts)
+    '''
+    adjacent_coords = [
+        (x + 1, y),
+        (x - 1, y),
+        (x, y + 1),
+        (x, y - 1),
+        (x + 1, y + 1),
+        (x - 1, y + 1),
+        (x + 1, y - 1),
+        (x - 1, y - 1)
+    ]
 
-    new_board = board
+    neighbour_count = [n for n in all_nodes if n.coords in adjacent_coords]
+    
+    
+    '''
+
+    new_board = copy.deepcopy(board)
     for row in range(board_diamensions['y']):
         for column in range(board_diamensions['x']):
-            neighbour_count = all_cell_neighbour_counts.get((row, column))
-            
-            # good spot to include some tests
+            #neighbour_count = all_cell_neighbour_counts.get((row, column))
+            # just do neighbour count check here instead of own section - bastract into a function later
+            neighbour_count = 0
+            for y in range(column-1, column+2):
+                # Iterate over the x range
+                for x in range(row-1, row+2): # these might be the other way round
+                    try:
+                        if board[x][y] == 1:
+                            neighbour_count += 1 
+                    except:
+                        pass # imagine all non existant cells are dead
+                    
+            print(neighbour_count)
             #for live cells
             if board[row][column] == 1:
                 if neighbour_count < 2 or neighbour_count > 3:
@@ -99,18 +109,15 @@ def run(board: list):
             if board[row][column] == 0:
                 if neighbour_count == 3:
                     new_board[row][column] = 1
+                    # decide if make it consider all nonexisting cells as dead
     
     # check if 0-index errors
     pprint.pp(new_board)
     #all_dead: bool = check_if_all_dead(new_board)
     #if all_dead:
     #    pprint.pp([[0 for col in range(board_diamensions['x'])] for row in range(board_diamensions['y'])])
-    #    print("All dead")
     #    quit()
 
-    print('new board')
-    print(new_board)
-    print('foothillsofthehimalayas')
     run(new_board)
         
 
