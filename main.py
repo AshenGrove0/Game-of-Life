@@ -21,8 +21,7 @@ alive_coords_to_start = [(3,2),(3,3),(3,4),(3,5)]
 def main():
     board = generate_starting_board()
     pprint.pp(board)
-    run(board) # let user choose num2
-    #do this recursively
+    run(board)
 
 def generate_starting_board(board_diamensions, alive_coords_to_start):
     '''Generates a board of provided size with alive cells at provided coordinates'''
@@ -46,7 +45,6 @@ def get_neighbour_count(board,row,column): # This needs the board as a parameter
                     neighbour_count += 1 
             except:
                 pass # imagine all non existant cells are dead
-    print(neighbour_count)
     return neighbour_count 
     
 def run(board: list):
