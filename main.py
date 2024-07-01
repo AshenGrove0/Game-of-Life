@@ -98,18 +98,21 @@ def run(board: list):
                     except:
                         pass # imagine all non existant cells are dead
                     
-            print(neighbour_count)
+            #print(neighbour_count)
             #for live cells
             if board[row][column] == 1:
+                neighbour_count -= 1 # omg idk why but it finally works it was checking itself IT WOKS
                 if neighbour_count < 2 or neighbour_count > 3:
                     new_board[row][column] = 0
+                    print(f'cell at {row},{column} died due to {neighbour_count} neighbours')
                 elif neighbour_count == 2 or neighbour_count == 3:
                     new_board[row][column] = 1
+                    print(f'cell at {row},{column} survived due to {neighbour_count} neighbours')
             # for dead cells
             if board[row][column] == 0:
                 if neighbour_count == 3:
                     new_board[row][column] = 1
-                    # decide if make it consider all nonexisting cells as dead
+                    print(f'cell at {row},{column} revived due to {neighbour_count} neighbours')
     
     # check if 0-index errors
     pprint.pp(new_board)
