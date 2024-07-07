@@ -19,7 +19,6 @@ def main():
         print("Usage: python main.py COORDS_FILE_NAME WIDTH HEIGHT") # you get your starting coords from a file
         sys.exit(1)
     coords_file_path = sys.argv[1]
-    print('xwq')
     alive_coords_to_start = read_coords_file(coords_file_path)
     board_diamensions['x'] = int(sys.argv[2])
     board_diamensions['y'] = int(sys.argv[3])
@@ -42,7 +41,7 @@ def read_coords_file(file):
     print('x')
     with open(file, 'r') as f:
         raw = f.readline() # should all be on 1 line
-        print(raw)
+    
     coords_dirty = [coord for coord in raw.split(',')]
     coords = []
     print(coords_dirty)
