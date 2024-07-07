@@ -16,7 +16,7 @@ alive_coords_to_start = [(3,2),(3,3),(3,4),(3,5)]
 
 def main():
     if len(sys.argv) != 5:
-        print("Usage: python main.py COORDS_FILE_NAME WIDTH HEIGHT") # you get your starting coords from a file
+        print("Usage: python main.py COORDS_FILE_PATH WIDTH HEIGHT") # you get your starting coords from a file
         sys.exit(1)
     coords_file_path = sys.argv[1]
     alive_coords_to_start = read_coords_file(coords_file_path)
@@ -38,17 +38,16 @@ def generate_starting_board(board_diamensions, alive_coords_to_start):
     return board
     
 def read_coords_file(file):
-    with open(f'coords/{file}', 'r') as f:
+    with open(file, 'r') as f:
         raw = f.readline() # should all be on 1 line
     
     coords_dirty = [coord for coord in raw.split(',')]
     coords = []
-    print(coords_dirty)
-    #for coord in coords_dirty # make this all work
+    for coord in coords_dirty # make this all work
     return coords
     
 def get_neighbour_count(board,row,column): # This needs the board as a parameter else it does the default one 
-    '''Returns the number of adjacent alive cells# to the cell with coordinates provided'''
+    '''Returns the number of adjacent alive cells to the cell with coordinates provided'''
     neighbour_count = 0
     for y in range(column-1, column+2):
         # Iterate over the x range
