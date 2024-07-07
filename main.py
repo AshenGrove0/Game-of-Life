@@ -15,18 +15,17 @@ board_diamensions = {
 alive_coords_to_start = [(3,2),(3,3),(3,4),(3,5)]
 
 def main():
-    if len(sys.argv) != 5:
-        print("Usage: python main.py COORDS_FILE_PATH WIDTH HEIGHT") # you get your starting coords from a file
+    if len(sys.argv) != 3:
+        print("Usage: python main.py COORDS_FILE_PATH DIAMENSION_X DIAMENSION_Y"")
         sys.exit(1)
     coords_file_path = sys.argv[1]
-    alive_coords_to_start = read_coords_file(coords_file_path)
     board_diamensions['x'] = int(sys.argv[2])
     board_diamensions['y'] = int(sys.argv[3])
-    board = generate_starting_board(board_diamensions, alive_coords_to_start)
+    board = generate_starting_board()
     pprint.pp(board)
-    run(board,board_diamensions)
+    run(board)
 
-def generate_starting_board(board_diamensions, alive_coords_to_start):
+def generate_starting_board():
     '''Generates a board of provided size with alive cells at provided coordinates'''
     board = [[0 for i in range(board_diamensions['x'])] for i in range(board_diamensions['y'])]
     for row in range(board_diamensions['y']):
@@ -36,16 +35,7 @@ def generate_starting_board(board_diamensions, alive_coords_to_start):
             else:
                 board[row][column] = 0
     return board
-    
-def read_coords_file(file):
-    with open(file, 'r') as f:
-        raw = f.readline() # should all be on 1 line
-    
-    coords_dirty = [coord for coord in raw.split(',')]
-    coords = []
-    for coord in coords_dirty # make this all work
-    return coords
-    
+
 def get_neighbour_count(board,row,column): # This needs the board as a parameter else it does the default one 
     '''Returns the number of adjacent alive cells to the cell with coordinates provided'''
     neighbour_count = 0
@@ -59,7 +49,7 @@ def get_neighbour_count(board,row,column): # This needs the board as a parameter
                 pass # imagine all non existant cells are dead
     return neighbour_count 
     
-def run(board: list, board_diamensions: dict):
+def run(board: list):
     'Recursively runs one iteration of the game, checking to see if cells are alive and modifying itself accordingly'
     time.sleep(1)
 
