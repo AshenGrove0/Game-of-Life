@@ -4,8 +4,7 @@ import time
 import copy
 import pygame # or should be tkinter or something else? hack it w pillow and weird screencapture colour stuff?
 # use file reading to give examples of interesting starting coords to user 
-import tkinter as tk
-import sys
+
 # add an option for random noise start
 board_diamensions = {
     'x': 8,
@@ -15,15 +14,31 @@ board_diamensions = {
 alive_coords_to_start = [(3,2),(3,3),(3,4),(3,5)]
 
 def main():
-    if len(sys.argv) != 3:
-        print("Usage: python main.py COORDS_FILE_PATH DIAMENSION_X DIAMENSION_Y"")
-        sys.exit(1)
-    coords_file_path = sys.argv[1]
-    board_diamensions['x'] = int(sys.argv[2])
-    board_diamensions['y'] = int(sys.argv[3])
+    initialise_pygame()
     board = generate_starting_board()
     pprint.pp(board)
     run(board)
+
+def initialise_pygame():
+    pygame.init()
+    size = width, height = 600, 400
+    BLACK = (0,0,0)
+    WHITE = (255,255,255)
+    screen = pygame.display.set_mode(size)
+    
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            sys.exit()
+    # Fill the background with white
+    screen.fill((255, 255, 255))
+
+    # Draw a solid blue circle in the center
+    pygame.draw.circle(screen, (0, 0, 255), (250, 250), 75)
+
+    # Flip the display
+    pygame.display.flip()
+            
+
 
 def generate_starting_board():
     '''Generates a board of provided size with alive cells at provided coordinates'''
