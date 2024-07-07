@@ -2,7 +2,6 @@ import numpy as np
 import pprint
 import time
 import copy
-import pygame # or should be tkinter or something else? hack it w pillow and weird screencapture colour stuff?
 # use file reading to give examples of interesting starting coords to user 
 
 # add an option for random noise start
@@ -14,22 +13,9 @@ board_diamensions = {
 alive_coords_to_start = [(3,2),(3,3),(3,4),(3,5)]
 
 def main():
-    initialise_pygame()
     board = generate_starting_board()
     pprint.pp(board)
     run(board)
-
-def initialise_pygame():
-    pygame.init()
-    size = width, height = 600, 400
-    BLACK = (0,0,0)
-    WHITE = (255,255,255)
-    screen = pygame.display.set_mode(size)
-    
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            sys.exit()
-            
 
 
 def generate_starting_board():
