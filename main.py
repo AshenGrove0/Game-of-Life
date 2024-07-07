@@ -38,8 +38,7 @@ def generate_starting_board(board_diamensions, alive_coords_to_start):
     return board
     
 def read_coords_file(file):
-    print('x')
-    with open(file, 'r') as f:
+    with open(f'coords/{file}', 'r') as f:
         raw = f.readline() # should all be on 1 line
     
     coords_dirty = [coord for coord in raw.split(',')]
