@@ -8,14 +8,21 @@ import os
 # use file reading to give examples of interesting starting coords to user 
 # Chatgpt used to speed up the generation of starting coordinates to save me counting 0-indexed coordinates
 # add an option for random noise start
-
+"""
+for row in colour_board:
+            print("  ".join(row))
+this is adapted from online
+"""
 def main():
     file, board_diamensions, display_type = parse_args()
     start()
     alive_coords_to_start = fetch_starting_coords(file)
     board = generate_starting_board(alive_coords_to_start,board_diamensions)
-    pprint.pp(board)
     run(board, board_diamensions, display_type)
+
+def print_board(board):
+    for row in board:
+        print("  ".join(row))
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -26,7 +33,7 @@ def parse_args():
     parser.add_argument('width', help='width in squares of board')
     parser.add_argument('height', help='height in squares of board')
     parser.add_argument('-f', '--filename', help="path to file with starting coordinates, default is /coords.txt")
-    parser.add_argument('-d', '--display', help="display type for board - `binary` or `colour`")
+    parser.add_argument('-d', '--display', help="display type for board - `raw` or `colour`")
 
     args = parser.parse_args()
     print(args)
@@ -118,7 +125,13 @@ def get_neighbour_count(board,row,column):
 def run(board: list, board_diamensions: dict, display_type: str):
     'Recursively runs one iteration of the game, checking to see if cells are alive and modifying itself accordingly'
     time.sleep(1)
+    os.system('clear')
     board = list(board)
+    if display_type == 'raw':
+        print_board(board)
+    else:
+        print_colour(board)
+    
     new_board = copy.deepcopy(board)
     for row in range(board_diamensions['y']):
         for column in range(board_diamensions['x']):
@@ -134,23 +147,23 @@ def run(board: list, board_diamensions: dict, display_type: str):
             if board[row][column] == 0:
                 if neighbour_count == 3:
                     new_board[row][column] = 1
-    os.system('clear')
-    if display_type == 'colour':
-        print_colour(new_board)
-    else:
-        pprint.pp(new_board)
+        
 
     run(new_board, board_diamensions, display_type)
 
 
 def print_colour(board: list):
-    WHITE = "\u001b[33mConway's Game of Life\u001b[0m"
-    BLACK = "\u001b[32mConway's Game of Life\u001b[0m"
+    WHITE = "\u001b[33m#\u001b[0m"
+    BLACK = "\u001b[31m#\u001b[0m"
     colour_board = copy.deepcopy(board)
     for row in range(len(board)):
-        for column in range(len(board[row])): # Yes I am aware that this doesn't make sense idc
+        for column in range(len(board[row])):
             colour_board[row][column] = WHITE if board[row][column] == 1 else BLACK
-    pprint.pp(colour_board)
+
+    'This is from online'
+    for row in colour_board:
+        print("  ".join(row))
+    'end of online'
 
 
 if __name__ == '__main__':
