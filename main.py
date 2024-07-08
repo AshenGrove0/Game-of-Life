@@ -17,16 +17,10 @@ for row in colour_board:
 this is adapted from online
 """
 
-def main():
-    file, board_diamensions, delay = parse_args()
-    start(file)
-    alive_coords_to_start = fetch_starting_coords(file)
-    board = generate_starting_board(alive_coords_to_start,board_diamensions)
-    run(board, board_diamensions, delay)
 
 def print_board(board):
     """Prints the current state of the board aesthetically"""
-    # NOTE: This does not work on IDLE as it does not use a real terminal. Deal with it :)
+    # NOTE: This does not work on IDLE as it does not use a real terminal.
     WHITE = "\u001b[33m#\u001b[0m"
     BLACK = "\u001b[31m#\u001b[0m"
     colour_board = copy.deepcopy(board)
@@ -35,6 +29,7 @@ def print_board(board):
             colour_board[row][column] = WHITE if board[row][column] == 1 else BLACK
     for row in colour_board:
         print("  ".join(row))
+
 
 def parse_args():
     """Parses the arguments to provide key metadata for simulation"""
@@ -52,15 +47,28 @@ def parse_args():
     args = parser.parse_args()
     print(args)
     board_diamensions = {
-    'x': int(args.width),
-    'y': int(args.height)
+        'x': int(args.width),
+        'y': int(args.height)
     }
     args.filename = "coords.txt" if args.filename == None else args.filename
     args.delay = float(args.delay) if args.delay != None else 1
     return f'coords/{args.filename}', board_diamensions, args.delay
 
 
-def start(file):
+def check_empty_file(file: str):
+    """Checks if the provided coordinate file is empty and crashes if so"""
+    with open(file, "r") as f:
+        raw = f.readlines()
+    for line in raw:
+        if line != '':
+            return False
+    print("""
+        \u001b[31mCause of crash: `{file}` is empty.\u001b[0m
+              """)
+    quit()
+
+
+def introduction(file):
     """Prints introduction to program"""
     coloured_name = "\u001b[32mConway's Game of Life\u001b[0m"
     BOLD = '\u001b[1m'
@@ -91,21 +99,6 @@ def start(file):
     os.system('clear')
         
 
-
-
-def check_empty_file(file: str):
-    """Checks if the provided coordinate file is empty and crashes if so"""
-    with open(file, "r") as f:
-        raw = f.readlines()
-    for line in raw:
-        if line != '':
-            return False
-    print("""
-        \u001b[31mCause of crash: `{file}` is empty.\u001b[0m
-              """)
-    quit()
-
-
 def fetch_starting_coords(file):
     """Fetches coords from input file"""
     with open(file, "r") as f:
@@ -115,6 +108,7 @@ def fetch_starting_coords(file):
         coords.append(tuple(int(x) for x in line.strip(' ').split(',')))
     print(coords)
     return coords
+
 
 def generate_starting_board(alive_coords_to_start: list, board_diamensions):
     '''Generates a board of provided size with alive cells at provided coordinates'''
@@ -127,6 +121,7 @@ def generate_starting_board(alive_coords_to_start: list, board_diamensions):
                 board[row][column] = 0
     return board
 
+
 def get_neighbour_count(board,row,column):
     '''Returns the number of adjacent alive cells to the cell with coordinates provided'''
     neighbour_count = 0
@@ -138,7 +133,8 @@ def get_neighbour_count(board,row,column):
             except:
                 pass # imagine all non existant cells are dead
     return neighbour_count 
-    
+
+
 def run(board: list, board_diamensions: dict, delay: float):
     '''Recursively runs one iteration of the game, checking to see if cells are alive and modifying itself accordingly'''
     time.sleep(delay)
@@ -166,8 +162,12 @@ def run(board: list, board_diamensions: dict, delay: float):
     run(new_board, board_diamensions, delay)
 
 
-
-
+def main():
+    file, board_diamensions, delay = parse_args()
+    introduction(file)
+    alive_coords_to_start = fetch_starting_coords(file)
+    board = generate_starting_board(alive_coords_to_start,board_diamensions)
+    run(board, board_diamensions, delay)
 
 if __name__ == '__main__':
     main()
