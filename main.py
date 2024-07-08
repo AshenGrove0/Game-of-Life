@@ -45,7 +45,7 @@ def parse_args():
 )
     parser.add_argument('width', help='width in squares of board')
     parser.add_argument('height', help='height in squares of board')
-    parser.add_argument('-f', '--filename', help="path to file with starting coordinates, default is /coords.txt")
+    parser.add_argument('-f', '--filename', help="path to file with starting coordinates, default is coords/coords.txt")
     parser.add_argument('-d', '--delay', help="time between generations")
 
 
@@ -57,7 +57,7 @@ def parse_args():
     }
     args.filename = "coords.txt" if args.filename == None else args.filename
     args.delay = float(args.delay) if args.delay != None else 1
-    return args.filename, board_diamensions, args.delay
+    return f'coords/{args.filename}', board_diamensions, args.delay
 
 
 def start(file):
