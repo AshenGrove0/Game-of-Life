@@ -2,24 +2,44 @@ import numpy as np
 import pprint
 import time
 import copy
+import sys
+import argparse
+import os
 # use file reading to give examples of interesting starting coords to user 
-
+# Chatgpt used to speed up the generation of starting coordinates to save me counting 0-indexed coordinates
 # add an option for random noise start
-board_diamensions = {
-    'x': 8,
-    'y': 10
-}
-
 
 def main():
+    file, board_diamensions, display_type = parse_args()
     start()
-    alive_coords_to_start = fetch_starting_coords()
-    board = generate_starting_board(alive_coords_to_start)
+    alive_coords_to_start = fetch_starting_coords(file)
+    board = generate_starting_board(alive_coords_to_start,board_diamensions)
     pprint.pp(board)
-    run(board)
+    run(board, board_diamensions, display_type)
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+    prog="main.py",
+    description="A numerical simulation of Conway's Game of Life",
+    usage="python3 main.py [-h] [-f FILENAME] width height"
+)
+    parser.add_argument('width', help='width in squares of board')
+    parser.add_argument('height', help='height in squares of board')
+    parser.add_argument('-f', '--filename', help="path to file with starting coordinates, default is /coords.txt")
+    parser.add_argument('-d', '--display', help="display type for board - `binary` or `colour`")
+
+    args = parser.parse_args()
+    print(args)
+    board_diamensions = {
+    'x': int(args.width),
+    'y': int(args.height)
+    }
+    args.filename = "coords.txt" if args.filename == None else args.filename
+    return args.filename, board_diamensions, args.display
 
 
 def start():
+    """Prints introduction to program"""
     coloured_name = "\u001b[32mConway's Game of Life\u001b[0m"
     BOLD = '\u001b[1m'
     GREEN = '\u001b[32m'
@@ -44,13 +64,9 @@ def start():
             A,B
           before running this program
           """)
-    presets = print("""
-        If you want to run a preset example setup, type the corresponding name:
-            glider: 
-            none: Enter your own starting coordinates
-          """)
     check_empty() # make sure this works with the presets
-    # allow to decide diamenisons 
+    time.sleep(3)
+    os.system('clear')
         
 
 
@@ -67,16 +83,16 @@ def check_empty():
     quit()
 
 
-def fetch_starting_coords():
-    with open("coords.txt", "r") as f:
+def fetch_starting_coords(file):
+    with open(file, "r") as f:
         raw = f.readlines()
     coords = []
     for line in raw:
-        coords.append(tuple(int(x) for x in line.split(',')))
+        coords.append(tuple(int(x) for x in line.strip(' ').split(',')))
     print(coords)
     return coords
 
-def generate_starting_board(alive_coords_to_start: list):
+def generate_starting_board(alive_coords_to_start: list, board_diamensions):
     '''Generates a board of provided size with alive cells at provided coordinates'''
     board = [[0 for i in range(board_diamensions['x'])] for i in range(board_diamensions['y'])]
     for row in range(board_diamensions['y']):
@@ -87,12 +103,11 @@ def generate_starting_board(alive_coords_to_start: list):
                 board[row][column] = 0
     return board
 
-def get_neighbour_count(board,row,column): # This needs the board as a parameter else it does the default one 
+def get_neighbour_count(board,row,column):
     '''Returns the number of adjacent alive cells to the cell with coordinates provided'''
     neighbour_count = 0
     for y in range(column-1, column+2):
-        # Iterate over the x range
-        for x in range(row-1, row+2): # these might be the other way round
+        for x in range(row-1, row+2):
             try:
                 if board[x][y] == 1:
                     neighbour_count += 1 
@@ -100,35 +115,42 @@ def get_neighbour_count(board,row,column): # This needs the board as a parameter
                 pass # imagine all non existant cells are dead
     return neighbour_count 
     
-def run(board: list):
+def run(board: list, board_diamensions: dict, display_type: str):
     'Recursively runs one iteration of the game, checking to see if cells are alive and modifying itself accordingly'
     time.sleep(1)
-
     board = list(board)
     new_board = copy.deepcopy(board)
     for row in range(board_diamensions['y']):
         for column in range(board_diamensions['x']):
             neighbour_count = get_neighbour_count(board,row,column)
-            
             #for live cells
             if board[row][column] == 1:
-                neighbour_count -= 1 # omg idk why but it finally works it was checking itself IT WOKS
+                neighbour_count -= 1
                 if neighbour_count < 2 or neighbour_count > 3:
                     new_board[row][column] = 0
-                    #print(f'cell at {row},{column} died due to {neighbour_count} neighbours')
                 elif neighbour_count == 2 or neighbour_count == 3:
                     new_board[row][column] = 1
-                    #print(f'cell at {row},{column} survived due to {neighbour_count} neighbours')
             # for dead cells
             if board[row][column] == 0:
                 if neighbour_count == 3:
                     new_board[row][column] = 1
-                    #print(f'cell at {row},{column} revived due to {neighbour_count} neighbours')
-    
-    pprint.pp(new_board)
+    os.system('clear')
+    if display_type == 'colour':
+        print_colour(new_board)
+    else:
+        pprint.pp(new_board)
 
-    run(new_board)
-        
+    run(new_board, board_diamensions, display_type)
+
+
+def print_colour(board: list):
+    WHITE = "\u001b[33mConway's Game of Life\u001b[0m"
+    BLACK = "\u001b[32mConway's Game of Life\u001b[0m"
+    colour_board = copy.deepcopy(board)
+    for row in range(len(board)):
+        for column in range(len(board[row])): # Yes I am aware that this doesn't make sense idc
+            colour_board[row][column] = WHITE if board[row][column] == 1 else BLACK
+    pprint.pp(colour_board)
 
 
 if __name__ == '__main__':
