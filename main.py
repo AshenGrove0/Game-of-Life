@@ -21,7 +21,13 @@ def main():
     run(board, board_diamensions, display_type)
 
 def print_board(board):
-    for row in board:
+    WHITE = "\u001b[33m#\u001b[0m"
+    BLACK = "\u001b[31m#\u001b[0m"
+    colour_board = copy.deepcopy(board)
+    for row in range(len(board)):
+        for column in range(len(board[row])):
+            colour_board[row][column] = WHITE if board[row][column] == 1 else BLACK
+    for row in colour_board:
         print("  ".join(row))
 
 def parse_args():
@@ -127,10 +133,7 @@ def run(board: list, board_diamensions: dict, display_type: str):
     time.sleep(1)
     os.system('clear')
     board = list(board)
-    if display_type == 'raw':
-        print_board(board)
-    else:
-        print_colour(board)
+    print_board(board)
     
     new_board = copy.deepcopy(board)
     for row in range(board_diamensions['y']):
@@ -152,18 +155,7 @@ def run(board: list, board_diamensions: dict, display_type: str):
     run(new_board, board_diamensions, display_type)
 
 
-def print_colour(board: list):
-    WHITE = "\u001b[33m#\u001b[0m"
-    BLACK = "\u001b[31m#\u001b[0m"
-    colour_board = copy.deepcopy(board)
-    for row in range(len(board)):
-        for column in range(len(board[row])):
-            colour_board[row][column] = WHITE if board[row][column] == 1 else BLACK
 
-    'This is from online'
-    for row in colour_board:
-        print("  ".join(row))
-    'end of online'
 
 
 if __name__ == '__main__':
