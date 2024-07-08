@@ -12,15 +12,64 @@ board_diamensions = {
 
 
 def main():
+    start()
     alive_coords_to_start = fetch_starting_coords()
     board = generate_starting_board(alive_coords_to_start)
     pprint.pp(board)
     run(board)
 
+
+def start():
+    coloured_name = "\u001b[32mConway's Game of Life\u001b[0m"
+    BOLD = '\u001b[1m'
+    GREEN = '\u001b[32m'
+    RED = '\u001b[31m'
+    YELLOW = '\u001b[33m'
+    END = '\u001b[0m'
+    print(f"""
+          This is a simulation of {coloured_name}.
+
+          Here are the rules, courtesy of Wikipedia:
+
+            Any live cell with {BOLD}fewer than two{END} live neighbours {RED}dies{END}, as if by underpopulation.
+
+            Any live cell with {BOLD}two or three{END} live neighbours {GREEN}lives on{END} to the next generation.
+
+            Any live cell with {BOLD}more than three{END} live neighbours {RED}dies{END}, as if by overpopulation.
+
+            Any dead cell with {BOLD}exactly three{END} live neighbours {YELLOW}becomes a live cell{END}, as if by reproduction.
+          
+          Input your starting coordinates in the file `coords.txt` in the format:
+            X,Y
+            A,B
+          before running this program
+          """)
+    presets = print("""
+        If you want to run a preset example setup, type the corresponding name:
+            glider: 
+            none: Enter your own starting coordinates
+          """)
+    check_empty() # make sure this works with the presets
+    # allow to decide diamenisons 
+        
+
+
+
+def check_empty():
+    with open('coords.txt', "r") as f:
+        raw = f.readlines()
+    for line in raw:
+        if line != '':
+            return False
+    print("""
+        \u001b[31mCause of crash: `coords.txt` is empty.\u001b[0m
+              """)
+    quit()
+
+
 def fetch_starting_coords():
     with open("coords.txt", "r") as f:
         raw = f.readlines()
-        #print(raw)
     coords = []
     for line in raw:
         coords.append(tuple(int(x) for x in line.split(',')))
