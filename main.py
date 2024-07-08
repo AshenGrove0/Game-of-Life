@@ -10,15 +10,24 @@ board_diamensions = {
     'y': 10
 }
 
-alive_coords_to_start = [(3,2),(3,3),(3,4),(3,5)]
 
 def main():
-    board = generate_starting_board()
+    alive_coords_to_start = fetch_starting_coords()
+    board = generate_starting_board(alive_coords_to_start)
     pprint.pp(board)
     run(board)
 
+def fetch_starting_coords():
+    with open("coords.txt", "r") as f:
+        raw = f.readlines()
+        #print(raw)
+    coords = []
+    for line in raw:
+        coords.append(tuple(int(x) for x in line.split(',')))
+    print(coords)
+    return coords
 
-def generate_starting_board():
+def generate_starting_board(alive_coords_to_start: list):
     '''Generates a board of provided size with alive cells at provided coordinates'''
     board = [[0 for i in range(board_diamensions['x'])] for i in range(board_diamensions['y'])]
     for row in range(board_diamensions['y']):
