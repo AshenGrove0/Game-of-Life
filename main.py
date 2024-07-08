@@ -18,7 +18,7 @@ this is adapted from online
 """
 
 
-def print_board(board):
+def print_board(board: list) -> None:
     """Prints the current state of the board aesthetically"""
     # NOTE: This does not work on IDLE as it does not use a real terminal.
     WHITE = "\u001b[33m#\u001b[0m"
@@ -31,7 +31,7 @@ def print_board(board):
         print("  ".join(row))
 
 
-def parse_args():
+def parse_args() -> tuple[str, dict, float]:
     """Parses the arguments to provide key metadata for simulation"""
     parser = argparse.ArgumentParser(
     prog="main.py",
@@ -55,7 +55,7 @@ def parse_args():
     return f'coords/{args.filename}', board_diamensions, args.delay
 
 
-def check_empty_file(file: str):
+def check_empty_file(file: str) -> None:
     """Checks if the provided coordinate file is empty and crashes if so"""
     with open(file, "r") as f:
         raw = f.readlines()
@@ -68,7 +68,7 @@ def check_empty_file(file: str):
     quit()
 
 
-def introduction(file):
+def introduction(file: str) -> None:
     """Prints introduction to program"""
     coloured_name = "\u001b[32mConway's Game of Life\u001b[0m"
     BOLD = '\u001b[1m'
@@ -99,7 +99,7 @@ def introduction(file):
     os.system('clear')
         
 
-def fetch_starting_coords(file):
+def fetch_starting_coords(file: str) -> list:
     """Fetches coords from input file"""
     with open(file, "r") as f:
         raw = f.readlines()
@@ -110,7 +110,7 @@ def fetch_starting_coords(file):
     return coords
 
 
-def generate_starting_board(alive_coords_to_start: list, board_diamensions):
+def generate_starting_board(alive_coords_to_start: list, board_diamensions: dict) -> list:
     '''Generates a board of provided size with alive cells at provided coordinates'''
     board = [[0 for i in range(board_diamensions['x'])] for i in range(board_diamensions['y'])]
     for row in range(board_diamensions['y']):
@@ -122,7 +122,7 @@ def generate_starting_board(alive_coords_to_start: list, board_diamensions):
     return board
 
 
-def get_neighbour_count(board,row,column):
+def get_neighbour_count(board: list, row: int, column: int) -> int:
     '''Returns the number of adjacent alive cells to the cell with coordinates provided'''
     neighbour_count = 0
     for y in range(column-1, column+2):
