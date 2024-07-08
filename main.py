@@ -5,22 +5,28 @@ import copy
 import sys
 import argparse
 import os
+# check why it godes funky around the edges - is it wrapping? amnd if the patterns give by cgpt is correct
 # use file reading to give examples of interesting starting coords to user 
 # Chatgpt used to speed up the generation of starting coordinates to save me counting 0-indexed coordinates
 # add an option for random noise start
+
+# allow user to select colour scheme  - affect starting message?
 """
 for row in colour_board:
             print("  ".join(row))
 this is adapted from online
 """
+
 def main():
-    file, board_diamensions, display_type = parse_args()
-    start()
+    file, board_diamensions, delay = parse_args()
+    start(file)
     alive_coords_to_start = fetch_starting_coords(file)
     board = generate_starting_board(alive_coords_to_start,board_diamensions)
-    run(board, board_diamensions, display_type)
+    run(board, board_diamensions, delay)
 
 def print_board(board):
+    """Prints the current state of the board aesthetically"""
+    # NOTE: This does not work on IDLE as it does not use a real terminal. Deal with it :)
     WHITE = "\u001b[33m#\u001b[0m"
     BLACK = "\u001b[31m#\u001b[0m"
     colour_board = copy.deepcopy(board)
@@ -31,6 +37,7 @@ def print_board(board):
         print("  ".join(row))
 
 def parse_args():
+    """Parses the arguments to provide key metadata for simulation"""
     parser = argparse.ArgumentParser(
     prog="main.py",
     description="A numerical simulation of Conway's Game of Life",
@@ -39,7 +46,8 @@ def parse_args():
     parser.add_argument('width', help='width in squares of board')
     parser.add_argument('height', help='height in squares of board')
     parser.add_argument('-f', '--filename', help="path to file with starting coordinates, default is /coords.txt")
-    parser.add_argument('-d', '--display', help="display type for board - `raw` or `colour`")
+    parser.add_argument('-d', '--delay', help="time between generations")
+
 
     args = parser.parse_args()
     print(args)
@@ -48,10 +56,11 @@ def parse_args():
     'y': int(args.height)
     }
     args.filename = "coords.txt" if args.filename == None else args.filename
-    return args.filename, board_diamensions, args.display
+    args.delay = float(args.delay) if args.delay != None else 1
+    return args.filename, board_diamensions, args.delay
 
 
-def start():
+def start(file):
     """Prints introduction to program"""
     coloured_name = "\u001b[32mConway's Game of Life\u001b[0m"
     BOLD = '\u001b[1m'
@@ -74,29 +83,31 @@ def start():
           
           Input your starting coordinates in the file `coords.txt` in the format:
             X,Y
-            A,B
           before running this program
+          or use a preset file
           """)
-    check_empty() # make sure this works with the presets
+    check_empty_file(file) # make sure this works with the presets
     time.sleep(3)
     os.system('clear')
         
 
 
 
-def check_empty():
-    with open('coords.txt', "r") as f:
+def check_empty_file(file: str):
+    """Checks if the provided coordinate file is empty and crashes if so"""
+    with open(file, "r") as f:
         raw = f.readlines()
     for line in raw:
         if line != '':
             return False
     print("""
-        \u001b[31mCause of crash: `coords.txt` is empty.\u001b[0m
+        \u001b[31mCause of crash: `{file}` is empty.\u001b[0m
               """)
     quit()
 
 
 def fetch_starting_coords(file):
+    """Fetches coords from input file"""
     with open(file, "r") as f:
         raw = f.readlines()
     coords = []
@@ -128,9 +139,9 @@ def get_neighbour_count(board,row,column):
                 pass # imagine all non existant cells are dead
     return neighbour_count 
     
-def run(board: list, board_diamensions: dict, display_type: str):
-    'Recursively runs one iteration of the game, checking to see if cells are alive and modifying itself accordingly'
-    time.sleep(1)
+def run(board: list, board_diamensions: dict, delay: float):
+    '''Recursively runs one iteration of the game, checking to see if cells are alive and modifying itself accordingly'''
+    time.sleep(delay)
     os.system('clear')
     board = list(board)
     print_board(board)
@@ -152,7 +163,7 @@ def run(board: list, board_diamensions: dict, display_type: str):
                     new_board[row][column] = 1
         
 
-    run(new_board, board_diamensions, display_type)
+    run(new_board, board_diamensions, delay)
 
 
 
