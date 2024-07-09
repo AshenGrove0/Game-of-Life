@@ -1,27 +1,13 @@
-25,1
-23,2
-25,2
-13,3
-14,3
-21,3
-22,3
-12,4
-16,4
-21,4
-22,4
-1,5
-2,5
-11,5
-1,6
-2,6
-11,6
-12,6
-11,7
-15,7
-12,8
-13,9
-14,10
-15,11
-16,12
-17,13
-18,13
+!Name: Gosper glider gun
+!Author: Bill Gosper
+!The first known gun and the first known finite pattern with unbounded growth.
+!www.conwaylife.com/wiki/index.php?title=Gosper_glider_gun
+........................O
+......................O.O
+............OO......OO............OO
+...........O...O....OO............OO
+OO........O.....O...OO
+OO........O...O.OO....O.O
+..........O.....O.......O
+...........O...O
+............OO

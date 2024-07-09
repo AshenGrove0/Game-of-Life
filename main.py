@@ -2,7 +2,7 @@ import numpy as np
 import pprint
 import time
 import copy
-import sys
+import random
 import argparse
 import os
 # check why it godes funky around the edges - is it wrapping? amnd if the patterns give by cgpt is correct
@@ -10,13 +10,17 @@ import os
 # Chatgpt used to speed up the generation of starting coordinates to save me counting 0-indexed coordinates
 # add an option for random noise start
 
+
+# add requests scraping from the website to generate new files and set the rest as gitignores so its a cleaner repo but on startup it downloads them all>
 # allow user to select colour scheme  - affect starting message?
+
+# add a way to get a random interesting structure from wiki
 """
 for row in colour_board:
             print("  ".join(row))
 this is adapted from online
 """
-
+# add a way to parse the files from the conway wiki into starting coords instead
 
 def print_board(board: list) -> None:
     """Prints the current state of the board aesthetically"""
@@ -36,23 +40,25 @@ def parse_args() -> tuple[str, dict, float]:
     parser = argparse.ArgumentParser(
     prog="main.py",
     description="A numerical simulation of Conway's Game of Life",
-    usage="python3 main.py [-h] [-f FILENAME] width height"
+    usage=f"python3 main.py [-h] [-w WIDTH] [-e ELEVATION] [-f FILENAME] [-d DELAY] [-r RANDOM]"
 )
-    parser.add_argument('width', help='width in squares of board')
-    parser.add_argument('height', help='height in squares of board')
+    parser.add_argument('-w', '--width', help='width in squares of board, default is 40, some diamensions may break patterns')
+    parser.add_argument('-e', '--elevation', help='height in squares of board, default is 40, some diamensions may break patterns')
     parser.add_argument('-f', '--filename', help="path to file with starting coordinates, default is coords/coords.txt")
     parser.add_argument('-d', '--delay', help="time between generations")
-
+    parser.add_argument('-r', '--random', help="random start or not (y/n)")
+    # Yes I am aware that elevation is a stupid name for height but I'm already using the -h flag for help
 
     args = parser.parse_args()
     print(args)
     board_diamensions = {
-        'x': int(args.width),
-        'y': int(args.height)
+        'x': int(args.width) if args.width != None else 40,
+        'y': int(args.elevation) if args.elevation != None else 40
     }
     args.filename = "coords.txt" if args.filename == None else args.filename
     args.delay = float(args.delay) if args.delay != None else 1
-    return f'coords/{args.filename}', board_diamensions, args.delay
+    args.random = True if args.random.lower() == 'y' else False
+    return f'coords/{args.filename}', board_diamensions, args.delay, args.random
 
 
 def check_empty_file(file: str) -> None:
@@ -95,24 +101,65 @@ def introduction(file: str) -> None:
           or use a preset file
           """)
     check_empty_file(file) # make sure this works with the presets
-    time.sleep(3)
+    time.sleep(2)
     os.system('clear')
         
 
-def fetch_starting_coords(file: str) -> list:
+def fetch_starting_coords(file: str, random:bool, board_diamensions:dict) -> list:
     """Fetches coords from input file"""
+    if random:
+        return noise_generator(board_diamensions)
     with open(file, "r") as f:
         raw = f.readlines()
-    coords = []
-    for line in raw:
-        coords.append(tuple(int(x) for x in line.strip(' ').split(',')))
-    print(coords)
+    pattern = False
+    for line in range(len(raw)): # Check if it is a pattern or coordsheet
+        if '.' in raw[line]:
+            pattern = True
+    
+    if not pattern:
+        coords = fetch_coords_from_coords(raw)
+    elif pattern:
+        coords = fetch_coords_from_pattern(raw)
+    else:
+        coords = fetch_coords_from_coords(raw)
     return coords
 
 
+def noise_generator(board_diamensions:dict) -> list:
+    board = [[random.randrange(0,2) for y in range(board_diamensions['y'])] for x in range(board_diamensions['x'])]
+    print(board)
+    coords = []
+    for row in range(len(board)):
+        indicies  = [index for (index, item) in enumerate(board[row]) if item == 1] # Adapted from https://www.freecodecamp.org/news/python-find-in-list-how-to-find-the-index-of-an-item-or-element-in-a-list/
+        for index in indicies:
+            coords.append(tuple((row, index)))
+    return coords
+    
+
+def fetch_coords_from_coords(raw:list) -> list:
+    coords = []
+    for line in raw:
+        coords.append(tuple(int(x) for x in line.strip(' ').split(',')))
+    return coords
+
+
+def fetch_coords_from_pattern(raw:list):
+    coords = []
+    pattern = copy.deepcopy(raw)
+    
+    for line in range(len(raw)): # removes starting info
+        if raw[line][0] == '!':
+            pattern.remove(raw[line])
+    for row in range(len(pattern)):
+        print(pattern[row])
+        indicies  = [index for (index, item) in enumerate(pattern[row]) if item == "O"] # Adapted from https://www.freecodecamp.org/news/python-find-in-list-how-to-find-the-index-of-an-item-or-element-in-a-list/
+        for index in indicies:
+            coords.append(tuple((row, index)))
+    return coords
+
 def generate_starting_board(alive_coords_to_start: list, board_diamensions: dict) -> list:
     '''Generates a board of provided size with alive cells at provided coordinates'''
-    board = [[0 for i in range(board_diamensions['x'])] for i in range(board_diamensions['y'])]
+    board = [[0 for i in range(board_diamensions['x'])] for j in range(board_diamensions['y'])] # were botjh i, changfed to i,j but thismany be a mistake
     for row in range(board_diamensions['y']):
         for column in range(board_diamensions['x']):
             if (row, column) in alive_coords_to_start:
@@ -163,9 +210,9 @@ def run(board: list, board_diamensions: dict, delay: float):
 
 
 def main():
-    file, board_diamensions, delay = parse_args()
+    file, board_diamensions, delay, random = parse_args()
     introduction(file)
-    alive_coords_to_start = fetch_starting_coords(file)
+    alive_coords_to_start = fetch_starting_coords(file, random, board_diamensions)
     board = generate_starting_board(alive_coords_to_start,board_diamensions)
     run(board, board_diamensions, delay)
 
