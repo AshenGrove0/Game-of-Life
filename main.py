@@ -1,14 +1,12 @@
-import numpy as np
-import pprint
 import time
 import copy
 import random
 import argparse
 import os
-# check why it godes funky around the edges - is it wrapping? amnd if the patterns give by cgpt is correct
+
 # use file reading to give examples of interesting starting coords to user 
-# Chatgpt used to speed up the generation of starting coordinates to save me counting 0-indexed coordinates
-# add an option for random noise start
+
+
 
 
 # add requests scraping from the website to generate new files and set the rest as gitignores so its a cleaner repo but on startup it downloads them all>
@@ -20,7 +18,6 @@ for row in colour_board:
             print("  ".join(row))
 this is adapted from online
 """
-# add a way to parse the files from the conway wiki into starting coords instead
 
 def print_board(board: list) -> None:
     """Prints the current state of the board aesthetically"""
