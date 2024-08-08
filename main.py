@@ -19,6 +19,8 @@ for row in colour_board:
 this is adapted from online
 """
 
+
+
 def print_board(board: list) -> None:
     """Prints the current state of the board aesthetically"""
     # NOTE: This does not work on IDLE as it does not use a real terminal.
@@ -52,6 +54,7 @@ def parse_args() -> tuple[str, dict, float]:
         'x': int(args.width) if args.width != None else 40,
         'y': int(args.elevation) if args.elevation != None else 40
     }
+    args.random = 'n' if args.random == None else args.random
     args.filename = "coords.txt" if args.filename == None else args.filename
     args.delay = float(args.delay) if args.delay != None else 1
     args.random = True if args.random.lower() == 'y' else False
@@ -185,6 +188,7 @@ def run(board: list, board_diamensions: dict, delay: float):
     os.system('clear')
     board = list(board)
     print_board(board)
+
     
     new_board = copy.deepcopy(board)
     for row in range(board_diamensions['y']):
@@ -206,7 +210,9 @@ def run(board: list, board_diamensions: dict, delay: float):
     run(new_board, board_diamensions, delay)
 
 
+
 def main():
+
     file, board_diamensions, delay, random = parse_args()
     introduction(file)
     alive_coords_to_start = fetch_starting_coords(file, random, board_diamensions)
