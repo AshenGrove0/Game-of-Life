@@ -61,7 +61,7 @@ def parse_args() -> tuple[str, dict, float]:
     return f'coords/{args.filename}', board_diamensions, args.delay, args.random
 
 
-def check_empty_file(file: str) -> None:
+def check_empty_file(file: str) -> bool:
     """Checks if the provided coordinate file is empty and crashes if so"""
     with open(file, "r") as f:
         raw = f.readlines()
@@ -136,14 +136,14 @@ def noise_generator(board_diamensions:dict) -> list:
     return coords
     
 
-def fetch_coords_from_coords(raw:list) -> list:
+def fetch_coords_from_coords(raw:list) -> list:  # Retrospectively what on earth is this name
     coords = []
     for line in raw:
         coords.append(tuple(int(x) for x in line.strip(' ').split(',')))
     return coords
 
 
-def fetch_coords_from_pattern(raw:list):
+def fetch_coords_from_pattern(raw:list) -> list:
     coords = []
     pattern = copy.deepcopy(raw)
     
