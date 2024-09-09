@@ -19,7 +19,7 @@ for row in colour_board:
 this is adapted from online
 """
 
-
+# replit working
 
 def print_board(board: list) -> None:
     """Prints the current state of the board aesthetically"""
