@@ -3,7 +3,8 @@ import copy
 import random
 import argparse
 import os
-
+import requests
+'''dont start in top left corner give space everywhree'''
 # use file reading to give examples of interesting starting coords to user 
 # add unit tests
 
@@ -11,7 +12,7 @@ import os
 
 # add requests scraping from the website to generate new files and set the rest as gitignores so its a cleaner repo but on startup it downloads them all>
 # allow user to select colour scheme  - affect starting message?
-
+## removre pattern if i cant fix it
 # add a way to get a random interesting structure from wiki
 """
 for row in colour_board:
@@ -39,26 +40,45 @@ def parse_args() -> tuple[str, dict, float]:
     parser = argparse.ArgumentParser(
     prog="main.py",
     description="A numerical simulation of Conway's Game of Life",
-    usage=f"python3 main.py [-h] [-w WIDTH] [-e ELEVATION] [-f FILENAME] [-d DELAY] [-r RANDOM]"
+    usage=f"python3 main.py [-h] [-w WIDTH] [-e ELEVATION] [-f FILENAME] [-d DELAY] [-r RANDOM] [-p PATTERN]"
 )
     parser.add_argument('-w', '--width', help='width in squares of board, default is 40, some diamensions may break patterns')
     parser.add_argument('-e', '--elevation', help='height in squares of board, default is 40, some diamensions may break patterns')
     parser.add_argument('-f', '--filename', help="path to file with starting coordinates, default is coords/coords.txt")
     parser.add_argument('-d', '--delay', help="time between generations")
-    parser.add_argument('-r', '--random', help="random start or not (y/n)")
+    parser.add_argument('-r', '--random', help="random noise start or not (y/n)")
+    parser.add_argument('-p', '--pattern', help="random pattern start or not (y/n)")
     # Yes I am aware that elevation is a stupid name for height but I'm already using the -h flag for help
 
     args = parser.parse_args()
     print(args)
     board_diamensions = {
-        'x': int(args.width) if args.width != None else 40,
-        'y': int(args.elevation) if args.elevation != None else 40
+        'x': int(args.width) if args.width != None else 20,
+        'y': int(args.elevation) if args.elevation != None else 20
     }
     args.random = 'n' if args.random == None else args.random
     args.filename = "coords.txt" if args.filename == None else args.filename
     args.delay = float(args.delay) if args.delay != None else 1
-    args.random = True if args.random.lower() == 'y' else False
-    return f'coords/{args.filename}', board_diamensions, args.delay, args.random
+    args.random = True if args.random == 'y' else False
+    args.pattern = True if args.pattern == 'y' else False
+    try:
+        for i in range(100):
+            if args.pattern == True:
+                args.pattern = requests.get("https://www.conwaylife.com/wiki/Special:Random").url
+                print(args.pattern)
+                name = args.pattern.split("/")[-1].replace("_","")
+                args.pattern = requests.get(f"https://conwaylife.com/patterns/{name.lower()}.cells").text
+                if "404 Not Found" not in args.pattern:
+                    with open(f"coords/{name}.txt",'w') as f:
+                        print(f"https://conwaylife.com/patterns/{name.lower()}.cells")
+                        f.write(args.pattern)
+                    args.filename = f"{name}.txt"
+                else:
+                    break
+                
+    except:
+        pass
+    return f'coords/{args.filename}', board_diamensions, args.delay, args.random, 
 
 
 def check_empty_file(file: str) -> bool:
