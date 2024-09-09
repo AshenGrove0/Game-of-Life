@@ -7,7 +7,7 @@ import os
 # use file reading to give examples of interesting starting coords to user 
 # add unit tests
 
-
+# patterns from conway wiki say ;bounding box - this is size so just go a bit bigger
 
 # add requests scraping from the website to generate new files and set the rest as gitignores so its a cleaner repo but on startup it downloads them all>
 # allow user to select colour scheme  - affect starting message?
