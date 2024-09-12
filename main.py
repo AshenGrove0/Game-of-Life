@@ -21,7 +21,7 @@ this is adapted from online
 """
 
 # replit working
-
+# note goes a bit weird when imp-orting stuff as always on the edge
 def print_board(board: list) -> None:
     """Prints the current state of the board aesthetically"""
     # NOTE: This does not work on IDLE as it does not use a real terminal.
@@ -40,14 +40,14 @@ def parse_args() -> tuple[str, dict, float]:
     parser = argparse.ArgumentParser(
     prog="main.py",
     description="A numerical simulation of Conway's Game of Life",
-    usage=f"python3 main.py [-h] [-w WIDTH] [-e ELEVATION] [-f FILENAME] [-d DELAY] [-r RANDOM] [-p PATTERN]"
+    usage=f"python3 main.py [-h] [-w WIDTH] [-e ELEVATION] [-f FILENAME] [-d DELAY] [-r RANDOM]"
 )
     parser.add_argument('-w', '--width', help='width in squares of board, default is 40, some diamensions may break patterns')
     parser.add_argument('-e', '--elevation', help='height in squares of board, default is 40, some diamensions may break patterns')
     parser.add_argument('-f', '--filename', help="path to file with starting coordinates, default is coords/coords.txt")
     parser.add_argument('-d', '--delay', help="time between generations")
     parser.add_argument('-r', '--random', help="random noise start or not (y/n)")
-    parser.add_argument('-p', '--pattern', help="random pattern start or not (y/n)")
+    #parser.add_argument('-p', '--pattern', help="random pattern start or not (y/n)")
     # Yes I am aware that elevation is a stupid name for height but I'm already using the -h flag for help
 
     args = parser.parse_args()
@@ -60,8 +60,8 @@ def parse_args() -> tuple[str, dict, float]:
     args.filename = "coords.txt" if args.filename == None else args.filename
     args.delay = float(args.delay) if args.delay != None else 1
     args.random = True if args.random == 'y' else False
-    args.pattern = True if args.pattern == 'y' else False
-    try:
+    #args.pattern = True if args.pattern == 'y' else False
+    '''try:
         for i in range(100):
             if args.pattern == True:
                 args.pattern = requests.get("https://www.conwaylife.com/wiki/Special:Random").url
@@ -77,7 +77,7 @@ def parse_args() -> tuple[str, dict, float]:
                     break
                 
     except:
-        pass
+        pass'''
     return f'coords/{args.filename}', board_diamensions, args.delay, args.random, 
 
 
