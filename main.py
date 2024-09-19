@@ -4,24 +4,8 @@ import random
 import argparse
 import os
 import requests
-'''dont start in top left corner give space everywhree'''
-# use file reading to give examples of interesting starting coords to user 
-# add unit tests
 
-# patterns from conway wiki say ;bounding box - this is size so just go a bit bigger
 
-# add requests scraping from the website to generate new files and set the rest as gitignores so its a cleaner repo but on startup it downloads them all>
-# allow user to select colour scheme  - affect starting message?
-## removre pattern if i cant fix it
-# add a way to get a random interesting structure from wiki
-"""
-for row in colour_board:
-            print("  ".join(row))
-this is adapted from online
-"""
-
-# replit working
-# note goes a bit weird when imp-orting stuff as always on the edge
 def print_board(board: list) -> None:
     """Prints the current state of the board aesthetically"""
     # NOTE: This does not work on IDLE as it does not use a real terminal.
@@ -51,7 +35,7 @@ def parse_args() -> tuple[str, dict, float]:
     # Yes I am aware that elevation is a stupid name for height but I'm already using the -h flag for help
 
     args = parser.parse_args()
-    print(args)
+    #print(args)
     board_diamensions = {
         'x': int(args.width) if args.width != None else 20,
         'y': int(args.elevation) if args.elevation != None else 20
@@ -120,7 +104,7 @@ def introduction(file: str) -> None:
           before running this program
           or use a preset file
           """)
-    check_empty_file(file) # make sure this works with the presets
+    check_empty_file(file)
     time.sleep(2)
     os.system('clear')
         
@@ -147,7 +131,7 @@ def fetch_starting_coords(file: str, random:bool, board_diamensions:dict) -> lis
 
 def noise_generator(board_diamensions:dict) -> list:
     board = [[random.randrange(0,2) for y in range(board_diamensions['y'])] for x in range(board_diamensions['x'])]
-    print(board)
+    #print(board)
     coords = []
     for row in range(len(board)):
         indicies  = [index for (index, item) in enumerate(board[row]) if item == 1] # Adapted from https://www.freecodecamp.org/news/python-find-in-list-how-to-find-the-index-of-an-item-or-element-in-a-list/
@@ -179,7 +163,7 @@ def fetch_coords_from_pattern(raw:list) -> list:
 
 def generate_starting_board(alive_coords_to_start: list, board_diamensions: dict) -> list:
     '''Generates a board of provided size with alive cells at provided coordinates'''
-    board = [[0 for i in range(board_diamensions['x'])] for j in range(board_diamensions['y'])] # were botjh i, changfed to i,j but thismany be a mistake
+    board = [[0 for i in range(board_diamensions['x'])] for j in range(board_diamensions['y'])]
     for row in range(board_diamensions['y']):
         for column in range(board_diamensions['x']):
             if (row, column) in alive_coords_to_start:
